@@ -31,7 +31,7 @@ public class UserDetailResDto {
         this.id = user.getId();
         this.email = user.getEmail();
         this.name = user.getName();
-        this.friends = user.getFollowings().stream().filter(f -> f.getType().equals("accepted")).toList().size();
+        this.friends = user.getFollowers().stream().filter(f -> f.getType().equals("accepted")).toList().size();
         this.isFriend = Objects.equals(myId, user.getId());
         this.createdAt = user.getCreatedAt();
         this.updatedAt = user.getUpdatedAt();
