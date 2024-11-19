@@ -2,6 +2,7 @@ package com.example.bugfixhub.entity.user;
 
 import com.example.bugfixhub.entity.BaseEntity;
 import com.example.bugfixhub.entity.comment.Comment;
+import com.example.bugfixhub.entity.friend.Friend;
 import com.example.bugfixhub.entity.post.Post;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -45,6 +46,13 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Friend> followers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "following", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<Friend> followings = new ArrayList<>();
+
 
     public User(String name, String email, String password) {
         this.name = name;
