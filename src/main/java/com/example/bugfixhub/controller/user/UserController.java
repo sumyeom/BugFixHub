@@ -2,6 +2,7 @@ package com.example.bugfixhub.controller.user;
 
 import com.example.bugfixhub.dto.user.CreateUserReqDto;
 import com.example.bugfixhub.dto.user.LoginReqDto;
+import com.example.bugfixhub.dto.user.UpdateUserReqDto;
 import com.example.bugfixhub.dto.user.UserDetailResDto;
 import com.example.bugfixhub.dto.user.UserResDto;
 import com.example.bugfixhub.service.user.UserService;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -64,5 +66,14 @@ public class UserController {
     ) {
 
         return new ResponseEntity<>(userService.findById(id, loginUser.getId()), HttpStatus.OK);
+    }
+
+    @PatchMapping
+    public ResponseEntity<UserResDto> update(
+            @Valid @RequestBody UpdateUserReqDto dto,
+            @SessionAttribute UserResDto loginUser
+    ) {
+
+        return new ResponseEntity<>(userService.update(loginUser.getId(), dto), HttpStatus.OK);
     }
 }

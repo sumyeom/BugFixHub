@@ -38,6 +38,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String password;
 
+    @Setter
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean deleted;
 

@@ -3,6 +3,7 @@ package com.example.bugfixhub.service.user;
 import com.example.bugfixhub.config.PasswordEncoder;
 import com.example.bugfixhub.dto.user.CreateUserReqDto;
 import com.example.bugfixhub.dto.user.LoginReqDto;
+import com.example.bugfixhub.dto.user.UpdateUserReqDto;
 import com.example.bugfixhub.dto.user.UserDetailResDto;
 import com.example.bugfixhub.dto.user.UserResDto;
 import com.example.bugfixhub.entity.user.User;
@@ -10,6 +11,7 @@ import com.example.bugfixhub.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -41,6 +43,8 @@ public class UserServiceImpl implements UserService {
     public UserResDto login(LoginReqDto dto) {
         User findUser = userRepository.findByEmailOrElseThrow(dto.getEmail());
 
+        isDeleted(findUser);
+
         if (!passwordEncoder.matches(dto.getPassword(), findUser.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "비밀번호를 확인해주세요.");
         }
@@ -52,14 +56,48 @@ public class UserServiceImpl implements UserService {
     public UserDetailResDto findById(Long id, Long myId) {
         User findUser = userRepository.findByIdOrElseThrow(id);
 
-        if (isDeleted(findUser)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "탈퇴된 회원입니다.");
-        }
+        isDeleted(findUser);
 
         return new UserDetailResDto(findUser, myId);
     }
 
-    private boolean isDeleted(User user) {
-        return user.isDeleted();
+    @Transactional
+    @Override
+    public UserResDto update(Long id, UpdateUserReqDto dto) {
+        User findUser = userRepository.findByIdOrElseThrow(id);
+
+        isDeleted(findUser);
+
+        if (dto.getOldPassword() == null && dto.getNewPassword() == null) {
+            if (dto.getName() != null) {
+                findUser.setName(dto.getName());
+            }
+        } else {
+            if (dto.getNewPassword() == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "새 비밀번호를 입력해주세요.");
+            }
+            if (dto.getOldPassword() == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "기존 비밀번호를 입력해주세요.");
+            }
+            if (!passwordEncoder.matches(dto.getOldPassword(), findUser.getPassword())) {
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호입니다.");
+            }
+            if (dto.getNewPassword().equals(dto.getOldPassword())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "동일한 비밀번호로 변경이 불가능합니다.");
+            }
+            if (dto.getName() != null) {
+                findUser.setName(dto.getName());
+            }
+
+            findUser.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+
+        }
+        return new UserResDto(findUser);
+    }
+
+    private void isDeleted(User user) {
+        if (user.isDeleted()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "탈퇴된 회원입니다");
+        }
     }
 }
