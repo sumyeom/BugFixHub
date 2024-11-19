@@ -91,8 +91,17 @@ public class UserController {
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> delete(@SessionAttribute UserResDto loginUser) {
+    public ResponseEntity<Void> delete(
+            @SessionAttribute UserResDto loginUser,
+            HttpServletRequest request
+    ) {
         userService.delete(loginUser.getId());
+
+        HttpSession session = request.getSession(false);
+
+        if (session != null) {
+            session.invalidate();
+        }
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
