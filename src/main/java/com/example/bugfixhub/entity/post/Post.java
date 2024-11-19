@@ -52,4 +52,13 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
+    public Post (String title, String contents, String type) {
+        this.title = title;
+        this.contents = contents;
+        this.type = type;
+    }
+
+    public Post() {
+
+    }
 }
