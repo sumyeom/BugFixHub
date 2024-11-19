@@ -6,6 +6,7 @@ import com.example.bugfixhub.dto.user.UpdateUserReqDto;
 import com.example.bugfixhub.dto.user.UserDetailResDto;
 import com.example.bugfixhub.dto.user.UserResDto;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 
 public interface UserService {
 
@@ -16,4 +17,6 @@ public interface UserService {
     UserDetailResDto findById(Long id, Long myId);
 
     UserResDto update(Long id, UpdateUserReqDto dto);
+
+    void checkPassword(String password, Long id);
 }

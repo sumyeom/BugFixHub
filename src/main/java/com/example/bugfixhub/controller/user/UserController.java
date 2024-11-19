@@ -10,6 +10,7 @@ import com.example.bugfixhub.session.Const;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -75,5 +76,15 @@ public class UserController {
     ) {
 
         return new ResponseEntity<>(userService.update(loginUser.getId(), dto), HttpStatus.OK);
+    }
+
+    @PostMapping("/password")
+    public ResponseEntity<Void> checkPassword(
+            @NotNull(message = "비밀번호를 입력해주세요") @RequestBody String password,
+            @SessionAttribute UserResDto loginUser
+    ) {
+        userService.checkPassword(password, loginUser.getId());
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

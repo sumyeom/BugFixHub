@@ -95,6 +95,17 @@ public class UserServiceImpl implements UserService {
         return new UserResDto(findUser);
     }
 
+    @Override
+    public void checkPassword(String password, Long id) {
+        User findUser = userRepository.findByIdOrElseThrow(id);
+
+        isDeleted(findUser);
+
+        if (!passwordEncoder.matches(password, findUser.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호입니다.");
+        }
+    }
+
     private void isDeleted(User user) {
         if (user.isDeleted()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "탈퇴된 회원입니다");
