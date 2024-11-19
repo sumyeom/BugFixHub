@@ -4,4 +4,6 @@ import com.example.bugfixhub.dto.post.*;
 
 public interface PostService {
     PostResDto create(Long userId, PostReqDto postReqDto);
+
+    void delete(Long id, Long userId);
 }

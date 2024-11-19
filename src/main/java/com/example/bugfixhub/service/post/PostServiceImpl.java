@@ -40,6 +40,18 @@ public class PostServiceImpl implements PostService {
         return new PostResDto(post);
     }
 
+    @Override
+    public void delete(Long id, Long userId) {
+        Post findPost = postRepository.findByIdOrThrow(id);
+        User user = userRepository.findByIdOrElseThrow(userId);
+
+        if (!user.getId().equals(findPost.getUser().getId())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "본인이 쓴 게시글만 삭제할 수 있습니다.");
+        }
+
+        postRepository.delete(findPost);
+    }
+
     private static String inputErrorMessage(Post post) {
         Map<String, String> nullCheckMap = new HashMap<>();
         String errorMessage = "";

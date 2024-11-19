@@ -17,6 +17,7 @@ public class PostController {
 
     /**
      * 게시글 등록
+     *
      * @param postReqDto
      * @param loginUser
      * @return
@@ -31,4 +32,19 @@ public class PostController {
         return new ResponseEntity<>(postResDto, HttpStatus.CREATED);
     }
 
+    /**
+     * 게시글 삭제
+     *
+     * @param loginUser
+     * @return
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<PostResDto> delete(
+            @PathVariable Long id,
+            @SessionAttribute UserResDto loginUser
+    ) {
+        postService.delete(id, loginUser.getId());
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 }
