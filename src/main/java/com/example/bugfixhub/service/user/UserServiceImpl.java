@@ -3,6 +3,7 @@ package com.example.bugfixhub.service.user;
 import com.example.bugfixhub.config.PasswordEncoder;
 import com.example.bugfixhub.dto.user.CreateUserReqDto;
 import com.example.bugfixhub.dto.user.LoginReqDto;
+import com.example.bugfixhub.dto.user.UserDetailResDto;
 import com.example.bugfixhub.dto.user.UserResDto;
 import com.example.bugfixhub.entity.user.User;
 import com.example.bugfixhub.repository.user.UserRepository;
@@ -45,5 +46,20 @@ public class UserServiceImpl implements UserService {
         }
 
         return new UserResDto(findUser);
+    }
+
+    @Override
+    public UserDetailResDto findById(Long id, Long myId) {
+        User findUser = userRepository.findByIdOrElseThrow(id);
+
+        if (isDeleted(findUser)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "탈퇴된 회원입니다.");
+        }
+
+        return new UserDetailResDto(findUser, myId);
+    }
+
+    private boolean isDeleted(User user) {
+        return user.isDeleted();
     }
 }

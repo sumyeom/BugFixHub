@@ -22,7 +22,7 @@ public class Friend extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, columnDefinition = "varchar default unChecked")
+    @Column(nullable = false)
     private String type;
 
     @Setter
