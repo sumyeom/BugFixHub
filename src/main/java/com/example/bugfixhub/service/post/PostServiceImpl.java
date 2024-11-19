@@ -30,6 +30,10 @@ public class PostServiceImpl implements PostService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage + "을 입력해 주세요.");
         }
 
+        if (!(post.getType().equals("info") || post.getType().equals("ask"))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 타입입니다.");
+        }
+
         post.setUser(user);
         postRepository.save(post);
 
