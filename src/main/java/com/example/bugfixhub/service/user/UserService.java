@@ -19,4 +19,6 @@ public interface UserService {
     UserResDto update(Long id, UpdateUserReqDto dto);
 
     void checkPassword(String password, Long id);
+
+    void delete(Long id);
 }

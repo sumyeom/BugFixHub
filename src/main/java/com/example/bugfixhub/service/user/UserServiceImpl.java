@@ -106,6 +106,15 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void delete(Long id) {
+        User findUser = userRepository.findByIdOrElseThrow(id);
+
+        isDeleted(findUser);
+
+        findUser.setDeleted(true);
+    }
+
     private void isDeleted(User user) {
         if (user.isDeleted()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "탈퇴된 회원입니다");

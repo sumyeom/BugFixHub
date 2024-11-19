@@ -1,5 +1,6 @@
 package com.example.bugfixhub.controller.user;
 
+import com.example.bugfixhub.dto.user.CheckPasswordReqDto;
 import com.example.bugfixhub.dto.user.CreateUserReqDto;
 import com.example.bugfixhub.dto.user.LoginReqDto;
 import com.example.bugfixhub.dto.user.UpdateUserReqDto;
@@ -14,6 +15,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -80,10 +82,17 @@ public class UserController {
 
     @PostMapping("/password")
     public ResponseEntity<Void> checkPassword(
-            @NotNull(message = "비밀번호를 입력해주세요") @RequestBody String password,
+            @Valid @RequestBody CheckPasswordReqDto dto,
             @SessionAttribute UserResDto loginUser
     ) {
-        userService.checkPassword(password, loginUser.getId());
+        userService.checkPassword(dto.getPassword(), loginUser.getId());
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> delete(@SessionAttribute UserResDto loginUser) {
+        userService.delete(loginUser.getId());
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
