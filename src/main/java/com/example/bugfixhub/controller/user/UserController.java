@@ -1,5 +1,6 @@
 package com.example.bugfixhub.controller.user;
 
+import com.example.bugfixhub.dto.post.GetAllPostResDto;
 import com.example.bugfixhub.dto.user.CheckPasswordReqDto;
 import com.example.bugfixhub.dto.user.CreateUserReqDto;
 import com.example.bugfixhub.dto.user.LoginReqDto;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
@@ -69,6 +71,16 @@ public class UserController {
     ) {
 
         return new ResponseEntity<>(userService.findById(id, loginUser.getId()), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/posts")
+    public ResponseEntity<GetAllPostResDto> findAllUserPost(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int limit
+    ) {
+
+        return new ResponseEntity<>(userService.findAllUserPost(id, page - 1, limit), HttpStatus.OK);
     }
 
     @PatchMapping
