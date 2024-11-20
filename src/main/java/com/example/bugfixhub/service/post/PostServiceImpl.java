@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -38,6 +39,14 @@ public class PostServiceImpl implements PostService {
         postRepository.save(post);
 
         return new PostResDto(post);
+    }
+
+    @Override
+    public GetIdPostResDto getPostById(Long id) {
+        Post post = postRepository.findByIdOrThrow(id);
+        User user = userRepository.findByIdOrElseThrow(post.getUser().getId());
+
+        return new GetIdPostResDto(post.getId(), user.getId(), user.getName(), post.getTitle(), post.getContents(), post.getType(), post.getCreatedAt(), post.getUpdatedAt());
     }
 
     @Override

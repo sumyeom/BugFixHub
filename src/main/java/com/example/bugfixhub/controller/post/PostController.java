@@ -1,5 +1,7 @@
 package com.example.bugfixhub.controller.post;
 
+import com.example.bugfixhub.dto.post.GetAllPostResDto;
+import com.example.bugfixhub.dto.post.GetIdPostResDto;
 import com.example.bugfixhub.dto.post.PostReqDto;
 import com.example.bugfixhub.dto.post.PostResDto;
 import com.example.bugfixhub.dto.user.UserResDto;
@@ -9,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/posts")
 @RequiredArgsConstructor
@@ -17,10 +21,6 @@ public class PostController {
 
     /**
      * 게시글 등록
-     *
-     * @param postReqDto
-     * @param loginUser
-     * @return
      */
     @PostMapping
     public ResponseEntity<PostResDto> create(
@@ -33,10 +33,25 @@ public class PostController {
     }
 
     /**
-     * 게시글 삭제
      *
-     * @param loginUser
      * @return
+     */
+
+    /**
+     * 선택 게시글 조회
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<GetIdPostResDto> getPostById(
+            @PathVariable Long id,
+            @SessionAttribute UserResDto loginUser
+    ) {
+        GetIdPostResDto postResDto = postService.getPostById(id);
+
+        return new ResponseEntity<>(postResDto, HttpStatus.OK);
+    }
+
+    /**
+     * 게시글 삭제
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<PostResDto> delete(

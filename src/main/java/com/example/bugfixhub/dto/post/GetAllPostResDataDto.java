@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class SearchAllPostResDto {
+public class GetAllPostResDataDto {
     private final Long id;
     private final Long userId;
     private final String userName;
@@ -14,7 +14,7 @@ public class SearchAllPostResDto {
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
-    public SearchAllPostResDto(Long id, Long userId, String UserName, String title, String type, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public GetAllPostResDataDto(Long id, Long userId, String UserName, String title, String type, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.userId = userId;
         this.userName = UserName;
