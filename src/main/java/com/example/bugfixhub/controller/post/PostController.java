@@ -33,17 +33,26 @@ public class PostController {
     }
 
     /**
-     *
-     * @return
+     * 게시글 수정
      */
+    @PatchMapping("/{id}")
+    public ResponseEntity<PostResDto> update(
+            @PathVariable Long id,
+            @RequestBody PostReqDto postReqDto,
+            @SessionAttribute UserResDto loginUser
+    ) {
+        PostResDto post = postService.update(id, loginUser.getId(), postReqDto);
+
+        return new ResponseEntity<>(post, HttpStatus.OK);
+    }
+
 
     /**
      * 선택 게시글 조회
      */
     @GetMapping("/{id}")
     public ResponseEntity<GetIdPostResDto> getPostById(
-            @PathVariable Long id,
-            @SessionAttribute UserResDto loginUser
+            @PathVariable Long id
     ) {
         GetIdPostResDto postResDto = postService.getPostById(id);
 

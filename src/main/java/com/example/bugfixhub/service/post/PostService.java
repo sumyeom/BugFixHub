@@ -7,5 +7,7 @@ public interface PostService {
 
     GetIdPostResDto getPostById(Long id);
 
+    PostResDto update(Long id, Long userId, PostReqDto postReqDto);
+
     void delete(Long id, Long userId);
 }

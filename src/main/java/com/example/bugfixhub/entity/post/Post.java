@@ -65,4 +65,10 @@ public class Post extends BaseEntity {
     public void updateDelete(boolean deleted) {
         this.deleted = deleted;
     }
+
+    public void update(String title, String contents, String type) {
+        this.title = title == null ? this.title : title;
+        this.contents = contents == null ? this.contents : contents;
+        this.type = type == null ? this.type : type;
+    }
 }
