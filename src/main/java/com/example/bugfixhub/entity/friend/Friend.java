@@ -23,7 +23,7 @@ public class Friend extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String type;
+    private String status;
 
     @Setter
     @ManyToOne
