@@ -1,14 +1,22 @@
 package com.example.bugfixhub.service.user;
 
 import com.example.bugfixhub.config.PasswordEncoder;
+import com.example.bugfixhub.dto.post.GetAllPostResDataDto;
+import com.example.bugfixhub.dto.post.GetAllPostResDto;
 import com.example.bugfixhub.dto.user.CreateUserReqDto;
 import com.example.bugfixhub.dto.user.LoginReqDto;
 import com.example.bugfixhub.dto.user.UpdateUserReqDto;
 import com.example.bugfixhub.dto.user.UserDetailResDto;
 import com.example.bugfixhub.dto.user.UserResDto;
+import com.example.bugfixhub.entity.post.Post;
 import com.example.bugfixhub.entity.user.User;
+import com.example.bugfixhub.repository.post.PostRepository;
 import com.example.bugfixhub.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +29,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -114,6 +123,26 @@ public class UserServiceImpl implements UserService {
         isDeleted(findUser);
 
         findUser.setDeleted(true);
+    }
+
+    @Override
+    public GetAllPostResDto findAllUserPost(Long id, int page, int limit) {
+        Pageable pageable = PageRequest.of(page, limit, Sort.by("createdAt").descending());
+
+        Page<Post> postsPage = postRepository.findByUserIdAndDeletedFalse(id, pageable);
+
+        Page<GetAllPostResDataDto> posts = postsPage.map(post -> new GetAllPostResDataDto(
+                post.getId(),
+                post.getUser().getId(),
+                post.getUser().getName(),
+                post.getTitle(),
+                post.getType(),
+                post.getComments().size(),
+                post.getCreatedAt(),
+                post.getUpdatedAt()
+        ));
+
+        return new GetAllPostResDto((long) posts.getTotalPages(), posts.getTotalElements(), posts.getContent());
     }
 
     private void isDeleted(User user) {
