@@ -46,19 +46,28 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findByIdOrThrow(id);
         User user = userRepository.findByIdOrElseThrow(post.getUser().getId());
 
+        if (post.isDeleted()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "없는(또는 삭제된) 게시글 입니다.");
+        }
+
         return new GetIdPostResDto(post.getId(), user.getId(), user.getName(), post.getTitle(), post.getContents(), post.getType(), post.getCreatedAt(), post.getUpdatedAt());
     }
 
     @Override
+    @Transactional
     public void delete(Long id, Long userId) {
         Post findPost = postRepository.findByIdOrThrow(id);
         User user = userRepository.findByIdOrElseThrow(userId);
+
+        if (findPost.isDeleted()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "없는(또는 삭제된) 게시글 입니다.");
+        }
 
         if (!user.getId().equals(findPost.getUser().getId())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "본인이 쓴 게시글만 삭제할 수 있습니다.");
         }
 
-        postRepository.delete(findPost);
+        findPost.updateDelete(true);
     }
 
     private static String inputErrorMessage(Post post) {

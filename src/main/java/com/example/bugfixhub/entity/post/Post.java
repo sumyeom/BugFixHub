@@ -61,4 +61,8 @@ public class Post extends BaseEntity {
     public Post() {
 
     }
+
+    public void updateDelete(boolean deleted) {
+        this.deleted = deleted;
+    }
 }
