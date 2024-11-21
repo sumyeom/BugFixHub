@@ -1,8 +1,10 @@
 package com.example.bugfixhub.service.post;
 
 import com.example.bugfixhub.dto.post.*;
+import com.example.bugfixhub.entity.comment.Comment;
 import com.example.bugfixhub.entity.post.Post;
 import com.example.bugfixhub.entity.user.User;
+import com.example.bugfixhub.repository.comment.CommentRepository;
 import com.example.bugfixhub.repository.post.PostRepository;
 import com.example.bugfixhub.repository.user.UserRepository;
 import jakarta.transaction.Transactional;
@@ -26,6 +28,7 @@ import java.util.Objects;
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public PostResDto create(Long userId, PostReqDto postReqDto) {
@@ -143,6 +146,25 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<PostCommentsResDto> getPostComments(Long id) {
+        Post post = postRepository.findByIdOrThrow(id);
+        List<Comment> comments = commentRepository.findByPostIdAndDeletedFalseOrderByCreatedAtDesc(id);
+
+        isDelete(post);
+
+        List<PostCommentsResDto> postComments = comments.stream().map(comment -> new PostCommentsResDto(
+                comment.getId(),
+                comment.getUser().getId(),
+                comment.getPost().getId(),
+                comment.getContents(),
+                comment.getCreatedAt(),
+                comment.getUpdatedAt()
+        )).toList();
+
+        return postComments;
+    }
+
+    @Override
     @Transactional
     public void delete(Long id, Long userId) {
         Post findPost = postRepository.findByIdOrThrow(id);
@@ -191,9 +213,5 @@ public class PostServiceImpl implements PostService {
         if (post.isDeleted()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "없는(또는 삭제된) 게시글 입니다.");
         }
-    }
-
-    private void isUSerPost(User user) {
-
     }
 }
