@@ -1,9 +1,6 @@
 package com.example.bugfixhub.controller.post;
 
-import com.example.bugfixhub.dto.post.GetAllPostResDto;
-import com.example.bugfixhub.dto.post.GetIdPostResDto;
-import com.example.bugfixhub.dto.post.PostReqDto;
-import com.example.bugfixhub.dto.post.PostResDto;
+import com.example.bugfixhub.dto.post.*;
 import com.example.bugfixhub.dto.user.UserResDto;
 import com.example.bugfixhub.service.post.PostService;
 import lombok.RequiredArgsConstructor;
