@@ -11,13 +11,13 @@ public class PostLikeResDto {
 
     private final Long userId;
 
-    private final String postId;
+    private final Long postId;
 
 
     public PostLikeResDto(Post post) {
         this.id = post.getId();
         this.userId = post.getUser().getId();
-        this.postId = post.getId().toString();
+        this.postId = post.getId();
 
     }
 

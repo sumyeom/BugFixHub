@@ -11,13 +11,13 @@ public class CommentLikeResDto {
 
     private final Long userId;
 
-    private final String commentId;
+    private final Long commentId;
 
 
     public CommentLikeResDto(Comment comment) {
         this.id = comment.getId();
         this.userId = comment.getUser().getId();
-        this.commentId = comment.getId().toString();
+        this.commentId = comment.getId();
 
     }
 
