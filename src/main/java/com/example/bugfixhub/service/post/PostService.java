@@ -10,7 +10,7 @@ public interface PostService {
 
     GetAllPostResDto getAllPosts(String type, String title, int page, int limit, String filter, LocalDateTime startDate, LocalDateTime endDate, Long userId);
 
-    GetIdPostResDto getPostById(Long id);
+    GetIdPostResDto getPostById(Long id, Long userId);
 
     PostResDto update(Long id, Long userId, PostReqDto postReqDto);
 

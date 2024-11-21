@@ -94,9 +94,10 @@ public class PostController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<GetIdPostResDto> getPostById(
-            @PathVariable Long id
+            @PathVariable Long id,
+            @SessionAttribute UserResDto loginUser
     ) {
-        GetIdPostResDto postResDto = postService.getPostById(id);
+        GetIdPostResDto postResDto = postService.getPostById(id, loginUser.getId());
 
         return new ResponseEntity<>(postResDto, HttpStatus.OK);
     }

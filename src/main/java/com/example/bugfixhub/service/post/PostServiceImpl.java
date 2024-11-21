@@ -156,13 +156,20 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public GetIdPostResDto getPostById(Long id) {
+    public GetIdPostResDto getPostById(Long id, Long userId) {
         Post post = postRepository.findByIdOrThrow(id);
         User user = userRepository.findByIdOrElseThrow(post.getUser().getId());
 
         isDelete(post);
 
-        return new GetIdPostResDto(post.getId(), user.getId(), user.getName(), post.getTitle(), post.getContents(), post.getType(), post.getCreatedAt(), post.getUpdatedAt());
+        AtomicBoolean isLiked = new AtomicBoolean(false);
+        post.getLikes().forEach(i -> {
+            if (!isLiked.get()) {
+                isLiked.set(i.getUser().getId().equals(userId));
+            }
+        });
+
+        return new GetIdPostResDto(post.getId(), user.getId(), user.getName(), post.getTitle(), post.getContents(), post.getType(), post.getLikes().size(), isLiked.get(), post.getCreatedAt(), post.getUpdatedAt());
     }
 
     @Override
