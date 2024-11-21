@@ -40,6 +40,10 @@ public class UserDetailResDto {
                 this.isFriend = true;
                 return;
             }
+            if (user.getFollowings().get(i).getId().equals(myId) && user.getFollowings().get(i).getStatus().equals("accepted")) {
+                this.isFriend = true;
+                return;
+            }
         }
 
         this.isFriend = false;
