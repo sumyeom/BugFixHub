@@ -5,6 +5,7 @@ import lombok.*;
 @Data
 public class CommentLikeResDto {
 
+
     private final Long id;
     private final Long userId;
     private final String content;     // 댓글 내용
