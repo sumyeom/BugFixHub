@@ -15,4 +15,5 @@ public class FriendResDto {
         private Long followerId;
         private Long followingId;
         private String status;
+
     }

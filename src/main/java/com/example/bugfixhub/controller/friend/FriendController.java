@@ -57,6 +57,7 @@ public class FriendController {
         Friend friend = friendService.checkFriendRequest(
                 id, friendReqStatusDto.getStatus()
         );
+
         FriendResDto responseDto = new FriendResDto(
                 friend.getId(),
                 friend.getFollower().getId(),

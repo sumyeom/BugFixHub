@@ -23,4 +23,6 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
      */
     List<Friend> findByFollowerOrFollowingAndStatus(User follower, User following, String status);
 
+
 }
+

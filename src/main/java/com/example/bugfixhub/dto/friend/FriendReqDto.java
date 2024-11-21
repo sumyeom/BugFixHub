@@ -11,6 +11,7 @@ public class FriendReqDto {
     @NotNull(message = "followingId는 필수 값 입니다.")
     private final Long followingId;
 
+
     @JsonCreator
     public FriendReqDto(Long followingId) {
         this.followingId = followingId;
