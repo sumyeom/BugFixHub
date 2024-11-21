@@ -3,8 +3,6 @@ package com.example.bugfixhub.service.comment;
 import com.example.bugfixhub.dto.comments.CommentReqDto;
 import com.example.bugfixhub.dto.comments.CommentResDto;
 
-import java.util.List;
-
 public interface CommentService {
 
     CommentResDto createComment(Long postId, Long userId, CommentReqDto commentReqDto);

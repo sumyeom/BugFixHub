@@ -5,10 +5,12 @@ import com.example.bugfixhub.dto.comments.CommentResDto;
 import com.example.bugfixhub.dto.user.UserResDto;
 import com.example.bugfixhub.service.comment.CommentService;
 import com.example.bugfixhub.session.Const;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/comments")
@@ -19,8 +21,8 @@ public class CommentController {
 
     @PostMapping
     public ResponseEntity<CommentResDto> createComment(
-            @RequestBody CommentReqDto commentReqDto,
-            @SessionAttribute(Const.LOGIN_USER)UserResDto loginUser) {
+            @Valid @RequestBody CommentReqDto commentReqDto,
+            @SessionAttribute(Const.LOGIN_USER) UserResDto loginUser) {
 
         Long userId = loginUser.getId();
 
@@ -36,6 +38,10 @@ public class CommentController {
             @SessionAttribute(Const.LOGIN_USER) UserResDto loginUser) {
 
         Long userId = loginUser.getId();
+
+        if (commentReqDto.getContents() == null || commentReqDto.getContents().trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정할 내용을 입력해 주세요");
+        }
 
         CommentResDto commentResDto = commentService.updateComment(id, userId, commentReqDto);
 
@@ -53,6 +59,4 @@ public class CommentController {
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-
 }
