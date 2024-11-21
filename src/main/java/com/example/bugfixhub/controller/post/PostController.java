@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/posts")
 @RequiredArgsConstructor
@@ -78,6 +80,18 @@ public class PostController {
         GetIdPostResDto postResDto = postService.getPostById(id);
 
         return new ResponseEntity<>(postResDto, HttpStatus.OK);
+    }
+
+    /**
+     * 게시글 별 댓글 조회
+     */
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<List<PostCommentsResDto>> getPostComments(
+            @PathVariable Long id
+    ) {
+        List<PostCommentsResDto> postCommentsResDto = postService.getPostComments(id);
+
+        return new ResponseEntity<>(postCommentsResDto, HttpStatus.OK);
     }
 
     /**
