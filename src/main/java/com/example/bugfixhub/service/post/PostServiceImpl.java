@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @RequiredArgsConstructor
@@ -88,8 +89,6 @@ public class PostServiceImpl implements PostService {
 
         if (type != null) {
             if (Objects.equals(type, "follow")) {
-
-
                 Page<Object[]> resultPage = postRepository.findPostsWithPagination(userId, title, filter, startDate, endDate, pageable);
 
                 List<GetAllPostResDataDto> post = resultPage.stream()
@@ -114,7 +113,6 @@ public class PostServiceImpl implements PostService {
                         resultPage.getTotalElements(),
                         post
                 );
-
             } else if (Objects.equals(type, "info") || Objects.equals(type, "ask")) {
                 postPage = postRepository.findByTypeAndTitleLikeAndCreatedAtBetweenAndDeletedFalse(type, "%" + (title == null ? "" : title) + "%", startDate, endDate, pageable);
             } else {
@@ -125,19 +123,29 @@ public class PostServiceImpl implements PostService {
                 postPage = postRepository.findByTitleLikeAndCreatedAtBetweenAndDeletedFalse("%" + title + "%", startDate, endDate, pageable);
             }
         }
+        ;
+        Page<GetAllPostResDataDto> posts = postPage.map(post -> {
+                    AtomicBoolean isLiked = new AtomicBoolean(false);
 
-        Page<GetAllPostResDataDto> posts = postPage.map(post -> new GetAllPostResDataDto(
-                        post.getId(),
-                        post.getUser().getId(),
-                        post.getUser().getName(),
-                        post.getTitle(),
-                        post.getType(),
-                        post.getComments().size(),
-                        post.getLikes().size(),
-                        !post.getLikes().isEmpty(),
-                        post.getCreatedAt(),
-                        post.getUpdatedAt()
-                )
+                    post.getLikes().stream().forEach(i -> {
+                        if (!isLiked.get()) {
+                            isLiked.set(i.getUser().getId().equals(userId));
+                        }
+                    });
+
+                    return new GetAllPostResDataDto(
+                            post.getId(),
+                            post.getUser().getId(),
+                            post.getUser().getName(),
+                            post.getTitle(),
+                            post.getType(),
+                            post.getComments().size(),
+                            post.getLikes().size(),
+                            isLiked.get(),
+                            post.getCreatedAt(),
+                            post.getUpdatedAt()
+                    );
+                }
         );
 
         if (posts.getTotalPages() < page + 1 && posts.getTotalElements() > 0) {
