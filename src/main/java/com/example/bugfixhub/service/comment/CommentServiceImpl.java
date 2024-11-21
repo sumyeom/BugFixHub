@@ -26,11 +26,17 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentResDto createComment(Long postId, Long userId, CommentReqDto commentReqDto) {
 
-        Post post = postRepository.findById(postId).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "없거나 삭제된 게시글입니다."));
+        Post post = postRepository.findByIdOrThrow(postId);
 
-        User user = userRepository.findById(userId).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
+        User user = userRepository.findByIdOrElseThrow(userId);
+
+        if (post.isDeleted()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제된 게시글 입니다.");
+        }
+
+        if (user.isDeleted()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "탈퇴된 사용자 입니다.");
+        }
 
         Comment comment = new Comment();
         comment.setContents(commentReqDto.getContents());
@@ -47,7 +53,11 @@ public class CommentServiceImpl implements CommentService {
     public CommentResDto updateComment(Long commentId, Long userId, CommentReqDto commentReqDto) {
         Comment comment = commentRepository.findByIdAndDeletedFalse(commentId);
         if (comment == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "없거나 삭제된 댓글입니다.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "없는 댓글 입니다.");
+        }
+
+        if (comment.isDeleted()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제된 댓글 입니다.");
         }
 
         if (!comment.getUser().getId().equals(userId) && !comment.getPost().getUser().getId().equals(userId)) {
@@ -64,7 +74,11 @@ public class CommentServiceImpl implements CommentService {
     public void deleteComment(Long commentId, Long userId) {
         Comment comment = commentRepository.findByIdAndDeletedFalse(commentId);
         if (comment == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "없거나 삭제된 댓글입니다.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "없는 댓글 입니다.");
+        }
+
+        if (comment.isDeleted()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제된 댓글 입니다.");
         }
 
         if (!comment.getUser().getId().equals(userId) && !comment.getPost().getUser().getId().equals(userId)) {
