@@ -21,59 +21,78 @@ public class FriendService {
     private final UserRepository userRepository;
 
     /**
-     * 친구 추가 :
+     * 1. 친구 추가기능 :
      * 사용자 존재 여부 확인 후
-     * unChecked 상태로 데이터 전송
+     * unChecked 상태로 데이터 전송,
+     * follower == following 동일시 친구 추가 불가
      */
     public Friend createFriendRequest(Long follower, Long following) {
 
-        User followingId = userRepository.findByIdOrElseThrow(following);
+
         User followerId = userRepository.findByIdOrElseThrow(follower);
+        User followingId = userRepository.findByIdOrElseThrow(following);
+
+        boolean requestExists = friendRepository.existsByFollowerAndFollowingAndStatus(followerId,followingId,"unChecked");
+        if (requestExists) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"이미 전송된 요청입니다.");
+        }
+
+        if (follower.equals(following)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "본인은 친구로 등록할 수 없습니다.");
+        }
 
         Friend friendRequestStatus = new Friend();
-        friendRequestStatus.setFollowing(followingId);
         friendRequestStatus.setFollower(followerId);
+        friendRequestStatus.setFollowing(followingId);
         friendRequestStatus.setStatus("unChecked");
 
         return friendRepository.save(friendRequestStatus);
     }
 
-
-
-    //. 2.친구 요청 확인(수락, 거절하기)
-    // id에 해당 하는 요청이 없는 경우 예외를 발생 시킨다.
+    /**
+     * 2. 친구 요청 상태변경 기능(default: unChecked):
+     * accepted(수락) 또는 rejected(거절)으로 구분,
+     * 사용자 여부 및 중복(거절) 요청 확인
+     */
     public Friend checkFriendRequest(Long id, String status) {
         Friend friend = friendRepository.findById(id).
-                orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "탈퇴한 사용자입니다."));
+                orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
 
-        // accepted(수락), rejected(거절) 중 하나인지 확인, 만약 둘다 아니라면 오류 전송
-        if (!status.equals("accepted") && !status.equals("rejected")) {
+        boolean requestCheckAccepted = friendRepository.existsByFollowingAndStatus(friend.getFollowing(),"accepted");
+        if (requestCheckAccepted) {
+            throw  new ResponseStatusException(HttpStatus.BAD_REQUEST,"이미 전송된 친구 요청입니다.");
+        }
 
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 전송 또는 추가된 사용자입니다.");
-
+        boolean requestCheckRejected = friendRepository.existsByFollowingAndStatus(friend.getFollowing(), "rejected");
+        if (requestCheckRejected) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "친구 요청을 거절했습니다.");
         }
 
         friend.setStatus(status);
         return friendRepository.save(friend);
     }
 
+    /**
+     * 3. 친구 요청 전체 확인 기능 :
+     * 친구 요청 여부 확인 후 삭제
+     */
+    public List<Friend> getFriendRequests(Long userId, String status) {
+        User user = userRepository.findByIdOrElseThrow(userId);
 
-    // 3. 친구 요청 삭제 및 받은 요청 삭제
-    public void deleteFriendRequest(Long id) {
-        // 친구 요청이 존재하는지 확인
-        if (!friendRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 친구 요청입니다.");
-
-        }
-
-        // 친구 요청 삭제
-        friendRepository.deleteById(id);
+        return friendRepository.findByFollowerOrFollowingAndStatus(user, user, status);
     }
 
+    /**
+     * 4. 친구 삭제 기능 :
+     * 친구 요청 여부 확인 후 삭제
+     */
+    public void deleteFriendRequest(Long id) {
 
-    //4. 친구 요청 리스트 전체 받기
-    public List<Friend> getFriendRequests(User receiveUser, User requestUser, String status) {
-        return friendRepository.findByFollowerOrFollowingAndStatus(receiveUser, requestUser, status);
+        if (!friendRepository.existsById(id)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 친구 요청입니다.");
+        }
+
+        friendRepository.deleteById(id);
     }
 
 }
