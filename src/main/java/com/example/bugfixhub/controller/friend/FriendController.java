@@ -50,7 +50,7 @@ public class FriendController {
      * 2. 친구 요청 상태 변경 기능: Friend 고유 id로 조회
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<FriendResDto> updateFriendStatus(     //네이밍 변경
+    public ResponseEntity<FriendResDto> updateFriendStatus(
             @PathVariable Long id,
             @RequestBody FriendReqStatusDto friendReqStatusDto) {
 
