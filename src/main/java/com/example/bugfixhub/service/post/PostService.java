@@ -14,7 +14,7 @@ public interface PostService {
 
     PostResDto update(Long id, Long userId, PostReqDto postReqDto);
 
-    List<PostCommentsResDto> getPostComments(Long id);
+    List<PostCommentsResDto> getPostComments(Long id, Long userId);
 
     void delete(Long id, Long userId);
 }

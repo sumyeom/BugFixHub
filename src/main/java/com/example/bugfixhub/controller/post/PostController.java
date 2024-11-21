@@ -106,9 +106,10 @@ public class PostController {
      */
     @GetMapping("/{id}/comments")
     public ResponseEntity<List<PostCommentsResDto>> getPostComments(
-            @PathVariable Long id
+            @PathVariable Long id,
+            @SessionAttribute UserResDto loginUser
     ) {
-        List<PostCommentsResDto> postCommentsResDto = postService.getPostComments(id);
+        List<PostCommentsResDto> postCommentsResDto = postService.getPostComments(id, loginUser.getId());
 
         return new ResponseEntity<>(postCommentsResDto, HttpStatus.OK);
     }

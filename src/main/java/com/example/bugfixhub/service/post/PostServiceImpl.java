@@ -127,7 +127,7 @@ public class PostServiceImpl implements PostService {
         Page<GetAllPostResDataDto> posts = postPage.map(post -> {
                     AtomicBoolean isLiked = new AtomicBoolean(false);
 
-                    post.getLikes().stream().forEach(i -> {
+                    post.getLikes().forEach(i -> {
                         if (!isLiked.get()) {
                             isLiked.set(i.getUser().getId().equals(userId));
                         }
@@ -191,20 +191,32 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostCommentsResDto> getPostComments(Long id) {
+    public List<PostCommentsResDto> getPostComments(Long id, Long userId) {
         Post post = postRepository.findByIdOrThrow(id);
         List<Comment> comments = commentRepository.findByPostIdAndDeletedFalseOrderByCreatedAtDesc(id);
 
         isDelete(post);
 
-        List<PostCommentsResDto> postComments = comments.stream().map(comment -> new PostCommentsResDto(
-                comment.getId(),
-                comment.getUser().getId(),
-                comment.getPost().getId(),
-                comment.getContents(),
-                comment.getCreatedAt(),
-                comment.getUpdatedAt()
-        )).toList();
+        List<PostCommentsResDto> postComments = comments.stream().map(comment -> {
+            AtomicBoolean isLiked = new AtomicBoolean(false);
+
+            comment.getLikes().forEach(i -> {
+                if (!isLiked.get()) {
+                    isLiked.set(i.getUser().getId().equals(userId));
+                }
+            });
+
+            return new PostCommentsResDto(
+                    comment.getId(),
+                    comment.getUser().getId(),
+                    comment.getPost().getId(),
+                    comment.getContents(),
+                    comment.getLikes().size(),
+                    isLiked.get(),
+                    comment.getCreatedAt(),
+                    comment.getUpdatedAt()
+            );
+        }).toList();
 
         return postComments;
     }
