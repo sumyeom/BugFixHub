@@ -136,7 +136,7 @@ public class UserServiceImpl implements UserService {
                 post.getUser().getId(),
                 post.getUser().getName(),
                 post.getTitle(),
-                post.getType(),
+                post.getType().getValue(),
                 post.getComments().size(),
                 post.getCreatedAt(),
                 post.getUpdatedAt()
