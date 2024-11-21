@@ -62,6 +62,7 @@ public class FriendController {
                 friend.getFollower().getId(),
                 friend.getFollowing().getId(),
                 friend.getStatus()
+
         );
 
         return ResponseEntity.ok(responseDto);
@@ -85,7 +86,8 @@ public class FriendController {
                         friend.getId(),
                         friend.getFollower().getId(),
                         friend.getFollowing().getId(),
-                        friend.getStatus()))
+                        friend.getStatus()
+                ))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(responseList);
