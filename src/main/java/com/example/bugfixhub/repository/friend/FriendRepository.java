@@ -14,11 +14,6 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
     boolean existsByFollowerAndFollowingAndStatus(User follower, User following, String status);
 
     /**
-     * 친구 요청 상태 변경시 중복 전송 또는 거절 여부 확인
-     */
-    boolean existsByFollowingAndStatus(User followingId, String status);
-
-    /**
      * 친구 요청 상태 전체 확인
      */
     List<Friend> findByFollowerOrFollowingAndStatus(User follower, User following, String status);

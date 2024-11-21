@@ -50,11 +50,11 @@ public class FriendController {
      * 2. 친구 요청 상태 변경 기능: Friend 고유 id로 조회
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<FriendResDto> checkFriendRequest(
+    public ResponseEntity<FriendResDto> updateFriendStatus(     //네이밍 변경
             @PathVariable Long id,
             @RequestBody FriendReqStatusDto friendReqStatusDto) {
 
-        Friend friend = friendService.checkFriendRequest(
+        Friend friend = friendService.updateFriendStatus(
                 id, friendReqStatusDto.getStatus()
         );
 
@@ -80,7 +80,7 @@ public class FriendController {
             @RequestParam(name = "status") String status,
             @SessionAttribute(name = Const.LOGIN_USER) UserResDto userResDto) {
 
-        List<Friend> friendList = friendService.getFriendRequests(userResDto.getId(), status);
+        List<Friend> friendList = friendService.findAllFriendRequestsStatus(userResDto.getId(), status);
 
         List<FriendResDto> responseList = friendList.stream()
                 .map(friend -> new FriendResDto(

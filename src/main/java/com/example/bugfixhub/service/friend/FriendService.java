@@ -54,33 +54,36 @@ public class FriendService {
      * accepted(수락) 또는 rejected(거절)으로 구분,
      * 사용자 여부 및 중복(거절) 요청 확인
      */
-    public Friend checkFriendRequest(Long id, String status) {
+    public Friend updateFriendStatus(Long id, String status) {
         Friend friend = friendRepository.findById(id).
                 orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
 
-        boolean requestCheckAccepted = friendRepository.existsByFollowingAndStatus(friend.getFollowing(),"accepted");
-        if (requestCheckAccepted) {
-            throw  new ResponseStatusException(HttpStatus.BAD_REQUEST,"이미 전송된 친구 요청입니다.");
+
+        if (friend.getStatus().equals("accepted")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 전송된 친구 요청입니다.");
         }
 
-        boolean requestCheckRejected = friendRepository.existsByFollowingAndStatus(friend.getFollowing(), "rejected");
-        if (requestCheckRejected) {
+
+        if (friend.getStatus().equals("rejected")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "친구 요청을 거절했습니다.");
         }
 
         friend.setStatus(status);
         return friendRepository.save(friend);
+
     }
 
-    /**
+
+     /**
      * 3. 친구 요청 전체 확인 기능 :
      * 친구 요청 여부 확인 후 삭제
      */
-    public List<Friend> getFriendRequests(Long userId, String status) {
+    public List<Friend> findAllFriendRequestsStatus(Long userId, String status) {
         User user = userRepository.findByIdOrElseThrow(userId);
 
         return friendRepository.findByFollowerOrFollowingAndStatus(user, user, status);
     }
+
 
     /**
      * 4. 친구 삭제 기능 :
