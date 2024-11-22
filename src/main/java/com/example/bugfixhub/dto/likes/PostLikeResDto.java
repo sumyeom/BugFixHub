@@ -1,9 +1,9 @@
 package com.example.bugfixhub.dto.likes;
 
-import com.example.bugfixhub.entity.post.Post;
+import com.example.bugfixhub.entity.like.PostLike;
 import lombok.*;
 
-@Data
+@Getter
 public class PostLikeResDto {
 
 
@@ -14,11 +14,10 @@ public class PostLikeResDto {
     private final Long postId;
 
 
-    public PostLikeResDto(Post post) {
-        this.id = post.getId();
-        this.userId = post.getUser().getId();
-        this.postId = post.getId();
-
+    public PostLikeResDto(PostLike postLike) {
+        this.id = postLike.getId();
+        this.userId = postLike.getUser().getId();
+        this.postId = postLike.getPost().getId();
     }
 
 }
