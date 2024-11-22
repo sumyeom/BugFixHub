@@ -32,6 +32,10 @@ public class PostLikeServiceImpl implements PostLikeService {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."));
 
+        if (post.getUser().getId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "본인 게시글에는 좋아요를 남길 수 없습니다");
+        }
+
         if (post.isDeleted()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제된 게시글입니다.");
         }
