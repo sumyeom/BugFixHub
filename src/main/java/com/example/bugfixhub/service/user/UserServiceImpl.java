@@ -1,7 +1,7 @@
 package com.example.bugfixhub.service.user;
 
 import com.example.bugfixhub.config.PasswordEncoder;
-import com.example.bugfixhub.dto.post.GetAllUserPostResDataDto;
+import com.example.bugfixhub.dto.post.GetAllPostResDataDto;
 import com.example.bugfixhub.dto.post.GetAllUserPostResDto;
 import com.example.bugfixhub.dto.user.CreateUserReqDto;
 import com.example.bugfixhub.dto.user.LoginReqDto;
@@ -131,13 +131,15 @@ public class UserServiceImpl implements UserService {
 
         Page<Post> postsPage = postRepository.findByUserIdAndDeletedFalse(id, pageable);
 
-        Page<GetAllUserPostResDataDto> posts = postsPage.map(post -> new GetAllUserPostResDataDto(
+        Page<GetAllPostResDataDto> posts = postsPage.map(post -> new GetAllPostResDataDto(
                 post.getId(),
                 post.getUser().getId(),
                 post.getUser().getName(),
                 post.getTitle(),
                 post.getType().getValue(),
                 post.getComments().size(),
+                post.getLikes().size(),
+                post.getLikes().stream().anyMatch(i -> i.getUser().getId().equals(id)),
                 post.getCreatedAt(),
                 post.getUpdatedAt()
         ));
