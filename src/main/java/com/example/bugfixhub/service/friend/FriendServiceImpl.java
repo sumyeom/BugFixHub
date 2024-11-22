@@ -154,7 +154,7 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public List<FriendUserResDto> findAllFriendReqs(Long id) {
         User user = userRepository.findByIdOrElseThrow(id);
-        List<Friend> requests = friendRepository.findByFollowerAndStatus(user, "unChecked");
+        List<Friend> requests = friendRepository.findByFollowerAndStatus(user, FriendStatus.fromValue("unChecked"));
         return requests.stream()
                 .filter(i -> i.getStatus().getValue().equals("unChecked"))
                 .map(i -> {
