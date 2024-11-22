@@ -1,13 +1,7 @@
 package com.example.bugfixhub.service.user;
 
-import com.example.bugfixhub.dto.post.GetAllPostResDto;
-import com.example.bugfixhub.dto.user.CreateUserReqDto;
-import com.example.bugfixhub.dto.user.LoginReqDto;
-import com.example.bugfixhub.dto.user.UpdateUserReqDto;
-import com.example.bugfixhub.dto.user.UserDetailResDto;
-import com.example.bugfixhub.dto.user.UserResDto;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import com.example.bugfixhub.dto.post.GetAllUserPostResDto;
+import com.example.bugfixhub.dto.user.*;
 
 public interface UserService {
 
@@ -23,5 +17,5 @@ public interface UserService {
 
     void delete(Long id);
 
-    GetAllPostResDto findAllUserPost(Long id, int page, int limit);
+    GetAllUserPostResDto findAllUserPost(Long id, int page, int limit);
 }

@@ -51,10 +51,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentResDto updateComment(Long commentId, Long userId, CommentReqDto commentReqDto) {
-        Comment comment = commentRepository.findByIdAndDeletedFalse(commentId);
-        if (comment == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "없는 댓글 입니다.");
-        }
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "없는 댓글 입니다."));
 
         if (comment.isDeleted()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제된 댓글 입니다.");
@@ -72,10 +69,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void deleteComment(Long commentId, Long userId) {
-        Comment comment = commentRepository.findByIdAndDeletedFalse(commentId);
-        if (comment == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "없는 댓글 입니다.");
-        }
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "없는 댓글 입니다."));
 
         if (comment.isDeleted()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제된 댓글 입니다.");

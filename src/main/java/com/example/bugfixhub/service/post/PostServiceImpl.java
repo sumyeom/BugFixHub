@@ -9,6 +9,7 @@ import com.example.bugfixhub.dto.post.PostResDto;
 import com.example.bugfixhub.entity.comment.Comment;
 import com.example.bugfixhub.entity.post.Post;
 import com.example.bugfixhub.entity.user.User;
+import com.example.bugfixhub.enums.PostType;
 import com.example.bugfixhub.repository.comment.CommentRepository;
 import com.example.bugfixhub.repository.post.PostRepository;
 import com.example.bugfixhub.repository.user.UserRepository;
@@ -23,8 +24,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @RequiredArgsConstructor
@@ -45,26 +48,31 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public GetAllPostResDto getAllPosts(String type, String title, int page, int limit, Long userId) {
-        Pageable pageable = PageRequest.of(page, limit, Sort.by("createdAt").descending());
+    public GetAllPostResDto getAllPosts(
+            String type, String title, int page, int limit, String filter, LocalDateTime startDate, LocalDateTime endDate, Long userId
+    ) {
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(filter).descending());
 
-        Page<Post> postPage = postRepository.findByDeletedFalse(pageable);
+        Page<Post> postPage = postRepository.findByCreatedAtBetweenAndDeletedFalse(startDate, endDate, pageable);
 
         if (type != null) {
             if (Objects.equals(type, "follow")) {
-                Page<Object[]> resultPage = postRepository.findPostsWithPagination(userId, title, pageable);
+                Page<Object[]> resultPage = postRepository.findPostsWithPagination(userId, title, filter, startDate, endDate, pageable);
 
                 List<GetAllPostResDataDto> post = resultPage.stream()
                         .map(row -> new GetAllPostResDataDto(
-                                ((Number) row[0]).longValue(),
-                                ((Number) row[1]).longValue(),
-                                (String) row[2],
-                                (String) row[3],
-                                (String) row[4],
-                                ((Number) row[5]).intValue(),
-                                ((Timestamp) row[6]).toLocalDateTime(),
-                                ((Timestamp) row[7]).toLocalDateTime()
-                        ))
+                                        ((Number) row[0]).longValue(),
+                                        ((Number) row[1]).longValue(),
+                                        (String) row[2],
+                                        (String) row[3],
+                                        (String) row[4],
+                                        ((Number) row[5]).intValue(),
+                                        ((Number) row[8]).intValue(),
+                                        !row[9].equals(0),
+                                        ((Timestamp) row[6]).toLocalDateTime(),
+                                        ((Timestamp) row[7]).toLocalDateTime()
+                                )
+                        )
                         .toList();
 
                 // 변수 방식이 다르기 때문에 따로 return 처리 진행
@@ -73,28 +81,40 @@ public class PostServiceImpl implements PostService {
                         resultPage.getTotalElements(),
                         post
                 );
-
             } else if (Objects.equals(type, "info") || Objects.equals(type, "ask")) {
-                postPage = postRepository.findByTypeAndTitleLikeAndDeletedFalse(type, "%" + (title == null ? "" : title) + "%", pageable);
+                postPage = postRepository.findByTypeAndTitleLikeAndCreatedAtBetweenAndDeletedFalse(PostType.fromValue(type), "%" + (title == null ? "" : title) + "%", startDate, endDate, pageable);
             } else {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 타입 입니다.");
             }
         } else {
             if (title != null) {
-                postPage = postRepository.findByTitleLikeAndDeletedFalse("%" + title + "%", pageable);
+                postPage = postRepository.findByTitleLikeAndCreatedAtBetweenAndDeletedFalse("%" + title + "%", startDate, endDate, pageable);
             }
         }
 
-        Page<GetAllPostResDataDto> posts = postPage.map(post -> new GetAllPostResDataDto(
-                post.getId(),
-                post.getUser().getId(),
-                post.getUser().getName(),
-                post.getTitle(),
-                post.getType().getValue(),
-                post.getComments().size(),
-                post.getCreatedAt(),
-                post.getUpdatedAt()
-        ));
+        Page<GetAllPostResDataDto> posts = postPage.map(post -> {
+                    AtomicBoolean isLiked = new AtomicBoolean(false);
+
+                    post.getLikes().forEach(i -> {
+                        if (!isLiked.get()) {
+                            isLiked.set(i.getUser().getId().equals(userId));
+                        }
+                    });
+
+                    return new GetAllPostResDataDto(
+                            post.getId(),
+                            post.getUser().getId(),
+                            post.getUser().getName(),
+                            post.getTitle(),
+                            post.getType().getValue(),
+                            post.getComments().size(),
+                            post.getLikes().size(),
+                            isLiked.get(),
+                            post.getCreatedAt(),
+                            post.getUpdatedAt()
+                    );
+                }
+        );
 
         if (posts.getTotalPages() < page + 1 && posts.getTotalElements() > 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "페이지 범위를 벗어났습니다.");
@@ -104,13 +124,20 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public GetIdPostResDto getPostById(Long id) {
+    public GetIdPostResDto getPostById(Long id, Long userId) {
         Post post = postRepository.findByIdOrThrow(id);
         User user = userRepository.findByIdOrElseThrow(post.getUser().getId());
 
         isDelete(post);
 
-        return new GetIdPostResDto(post.getId(), user.getId(), user.getName(), post.getTitle(), post.getContents(), post.getType().getValue(), post.getCreatedAt(), post.getUpdatedAt());
+        AtomicBoolean isLiked = new AtomicBoolean(false);
+        post.getLikes().forEach(i -> {
+            if (!isLiked.get()) {
+                isLiked.set(i.getUser().getId().equals(userId));
+            }
+        });
+
+        return new GetIdPostResDto(post.getId(), user.getId(), user.getName(), post.getTitle(), post.getContents(), post.getType().getValue(), post.getLikes().size(), isLiked.get(), post.getCreatedAt(), post.getUpdatedAt());
     }
 
     @Override
@@ -130,20 +157,32 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostCommentsResDto> getPostComments(Long id) {
+    public List<PostCommentsResDto> getPostComments(Long id, Long userId) {
         Post post = postRepository.findByIdOrThrow(id);
         List<Comment> comments = commentRepository.findByPostIdAndDeletedFalseOrderByCreatedAtDesc(id);
 
         isDelete(post);
 
-        List<PostCommentsResDto> postComments = comments.stream().map(comment -> new PostCommentsResDto(
-                comment.getId(),
-                comment.getUser().getId(),
-                comment.getPost().getId(),
-                comment.getContents(),
-                comment.getCreatedAt(),
-                comment.getUpdatedAt()
-        )).toList();
+        List<PostCommentsResDto> postComments = comments.stream().map(comment -> {
+            AtomicBoolean isLiked = new AtomicBoolean(false);
+
+            comment.getLikes().forEach(i -> {
+                if (!isLiked.get()) {
+                    isLiked.set(i.getUser().getId().equals(userId));
+                }
+            });
+
+            return new PostCommentsResDto(
+                    comment.getId(),
+                    comment.getUser().getId(),
+                    comment.getPost().getId(),
+                    comment.getContents(),
+                    comment.getLikes().size(),
+                    isLiked.get(),
+                    comment.getCreatedAt(),
+                    comment.getUpdatedAt()
+            );
+        }).toList();
 
         return postComments;
     }
@@ -169,7 +208,7 @@ public class PostServiceImpl implements PostService {
      */
     private void isDelete(Post post) {
         if (post.isDeleted()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제된 게시글 입니다.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "없는(또는 삭제된) 게시글 입니다.");
         }
     }
 }
