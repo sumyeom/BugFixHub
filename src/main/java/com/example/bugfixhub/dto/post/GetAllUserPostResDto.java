@@ -8,9 +8,9 @@ import java.util.List;
 public class GetAllUserPostResDto {
     private final Long totalPages;
     private final Long totalElements;
-    private final List<GetAllUserPostResDataDto> data;
+    private final List<GetAllPostResDataDto> data;
 
-    public GetAllUserPostResDto(Long totalPages, Long totalElements, List<GetAllUserPostResDataDto> getAllUserPostResDto) {
+    public GetAllUserPostResDto(Long totalPages, Long totalElements, List<GetAllPostResDataDto> getAllUserPostResDto) {
         this.totalPages = totalPages;
         this.totalElements = totalElements;
         this.data = getAllUserPostResDto;

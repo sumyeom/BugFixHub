@@ -208,7 +208,7 @@ public class PostServiceImpl implements PostService {
      */
     private void isDelete(Post post) {
         if (post.isDeleted()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "없는(또는 삭제된) 게시글 입니다.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "삭제된 게시글 입니다.");
         }
     }
 }
