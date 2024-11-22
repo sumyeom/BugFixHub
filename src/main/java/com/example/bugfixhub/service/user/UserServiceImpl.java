@@ -126,7 +126,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public GetAllUserPostResDto findAllUserPost(Long id, int page, int limit) {
+    public GetAllUserPostResDto findAllUserPost(Long id, Long loginUserId, int page, int limit) {
         Pageable pageable = PageRequest.of(page, limit, Sort.by("createdAt").descending());
 
         Page<Post> postsPage = postRepository.findByUserIdAndDeletedFalse(id, pageable);
@@ -139,7 +139,7 @@ public class UserServiceImpl implements UserService {
                 post.getType().getValue(),
                 post.getComments().size(),
                 post.getLikes().size(),
-                post.getLikes().stream().anyMatch(i -> i.getUser().getId().equals(id)),
+                post.getLikes().stream().anyMatch(i -> i.getUser().getId().equals(loginUserId)),
                 post.getCreatedAt(),
                 post.getUpdatedAt()
         ));

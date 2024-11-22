@@ -1,7 +1,11 @@
 package com.example.bugfixhub.service.user;
 
 import com.example.bugfixhub.dto.post.GetAllUserPostResDto;
-import com.example.bugfixhub.dto.user.*;
+import com.example.bugfixhub.dto.user.CreateUserReqDto;
+import com.example.bugfixhub.dto.user.LoginReqDto;
+import com.example.bugfixhub.dto.user.UpdateUserReqDto;
+import com.example.bugfixhub.dto.user.UserDetailResDto;
+import com.example.bugfixhub.dto.user.UserResDto;
 
 public interface UserService {
 
@@ -17,5 +21,5 @@ public interface UserService {
 
     void delete(Long id);
 
-    GetAllUserPostResDto findAllUserPost(Long id, int page, int limit);
+    GetAllUserPostResDto findAllUserPost(Long id, Long loginUserId, int page, int limit);
 }
