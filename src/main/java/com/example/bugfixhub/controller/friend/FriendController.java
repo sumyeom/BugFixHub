@@ -5,6 +5,7 @@ import com.example.bugfixhub.dto.friend.FriendReqStatusDto;
 import com.example.bugfixhub.dto.friend.FriendResDto;
 import com.example.bugfixhub.dto.friend.FriendUserResDto;
 import com.example.bugfixhub.dto.user.UserResDto;
+import com.example.bugfixhub.enums.FriendStatus;
 import com.example.bugfixhub.service.friend.FriendService;
 import com.example.bugfixhub.session.Const;
 import lombok.RequiredArgsConstructor;
@@ -53,12 +54,8 @@ public class FriendController {
             @RequestBody FriendReqStatusDto friendReqStatusDto,
             @SessionAttribute UserResDto loginUser
     ) {
-        if (!friendReqStatusDto.getStatus().equals("accepted") && !friendReqStatusDto.getStatus().equals("rejected")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "status를 확인해 주세요.");
-        }
 
-        return ResponseEntity.ok(friendService.updateFriendStatus(id, friendReqStatusDto.getStatus(), loginUser.getId()));
-
+        return ResponseEntity.ok(friendService.updateFriendStatus(id, friendReqStatusDto.getStatus().getValue(), loginUser.getId()));
     }
 
 
@@ -68,12 +65,12 @@ public class FriendController {
      */
     @GetMapping
     public ResponseEntity<List<FriendUserResDto>> getFriendRequests(
-            @RequestParam(name = "status") String status,
+            @RequestParam(name = "status") FriendStatus status,
             @SessionAttribute(name = Const.LOGIN_USER) UserResDto userResDto
     ) {
-        if (status.equals("accepted")) {
+        if (status.getValue().equals("accepted")) {
             return ResponseEntity.ok(friendService.findAllFriends(userResDto.getId()));
-        } else if (status.equals("unChecked")) {
+        } else if (status.getValue().equals("unChecked")) {
             return ResponseEntity.ok(friendService.findAllFriendReqs(userResDto.getId()));
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status 를 확인해 주세요.");

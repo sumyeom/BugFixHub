@@ -4,6 +4,7 @@ import com.example.bugfixhub.dto.friend.FriendResDto;
 import com.example.bugfixhub.dto.friend.FriendUserResDto;
 import com.example.bugfixhub.entity.friend.Friend;
 import com.example.bugfixhub.entity.user.User;
+import com.example.bugfixhub.enums.FriendStatus;
 import com.example.bugfixhub.repository.friend.FriendRepository;
 import com.example.bugfixhub.repository.user.UserRepository;
 import lombok.Getter;
@@ -54,7 +55,7 @@ public class FriendServiceImpl implements FriendService {
         Friend friendRequestStatus = new Friend();
         friendRequestStatus.setFollower(followerId);
         friendRequestStatus.setFollowing(followingId);
-        friendRequestStatus.setStatus("unChecked");
+        friendRequestStatus.setStatus(FriendStatus.fromValue("unChecked"));
 
         return new FriendResDto(friendRepository.save(friendRequestStatus));
     }
@@ -65,7 +66,7 @@ public class FriendServiceImpl implements FriendService {
         Optional<Friend> findFriend = friendRepository.findByFollowerAndFollowing(followUser, followingUser);
 
         if (findFriend.isPresent()) {
-            String status = findFriend.get().getStatus();
+            String status = findFriend.get().getStatus().getValue();
             if (status.equals("unChecked")) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 전송된 요청 입니다.");
             }
@@ -74,7 +75,7 @@ public class FriendServiceImpl implements FriendService {
             }
 
             Friend friend = findFriend.get();
-            friend.setStatus("unChecked");
+            friend.setStatus(FriendStatus.fromValue("unChecked"));
             return new FriendResDto(friend);
         }
         return null;
@@ -93,11 +94,11 @@ public class FriendServiceImpl implements FriendService {
         if (!friend.getFollower().getId().equals(loginUserId)) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "본인에게 온 요청만 처리할 수 있습니다.");
         }
-        if (friend.getStatus().equals("accepted")) {
+        if (friend.getStatus().getValue().equals("accepted")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 처리된 요청 입니다.");
         }
 
-        friend.setStatus(status);
+        friend.setStatus(FriendStatus.fromValue(status));
         return new FriendResDto(friend);
     }
 
@@ -112,7 +113,7 @@ public class FriendServiceImpl implements FriendService {
         User user = userRepository.findByIdOrElseThrow(id);
 
         List<FriendUserResDto> followUsers = user.getFollowers().stream()
-                .filter(i -> i.getStatus().equals("accepted"))
+                .filter(i -> i.getStatus().getValue().equals("accepted"))
                 .map(i -> {
                     User friendUser = Objects.equals(i.getFollower().getId(), id) ? i.getFollowing() : i.getFollower();
 
@@ -127,7 +128,7 @@ public class FriendServiceImpl implements FriendService {
                 }).toList();
 
         List<FriendUserResDto> followingUsers = user.getFollowings().stream()
-                .filter(i -> i.getStatus().equals("accepted"))
+                .filter(i -> i.getStatus().getValue().equals("accepted"))
                 .map(i -> {
                     User friendUser = Objects.equals(i.getFollower().getId(), id) ? i.getFollowing() : i.getFollower();
 
@@ -155,7 +156,7 @@ public class FriendServiceImpl implements FriendService {
         User user = userRepository.findByIdOrElseThrow(id);
         List<Friend> requests = friendRepository.findByFollowerAndStatus(user, "unChecked");
         return requests.stream()
-                .filter(i -> i.getStatus().equals("unChecked"))
+                .filter(i -> i.getStatus().getValue().equals("unChecked"))
                 .map(i -> {
                     User friendUser = Objects.equals(i.getFollower().getId(), id) ? i.getFollowing() : i.getFollower();
 
@@ -178,7 +179,7 @@ public class FriendServiceImpl implements FriendService {
         Friend friend = friendRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지 않는 요청 입니다."));
 
         if (!loginUserId.equals(friend.getFollower().getId())) {
-            if (friend.getStatus().equals("accepted") && loginUserId.equals(friend.getFollowing().getId())) {
+            if (friend.getStatus().getValue().equals("accepted") && loginUserId.equals(friend.getFollowing().getId())) {
                 friendRepository.deleteById(id);
                 return;
             }
