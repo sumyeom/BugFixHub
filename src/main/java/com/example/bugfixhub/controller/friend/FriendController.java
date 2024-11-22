@@ -5,7 +5,6 @@ import com.example.bugfixhub.dto.friend.FriendReqStatusDto;
 import com.example.bugfixhub.dto.friend.FriendResDto;
 import com.example.bugfixhub.dto.friend.FriendUserResDto;
 import com.example.bugfixhub.dto.user.UserResDto;
-import com.example.bugfixhub.enums.FriendStatus;
 import com.example.bugfixhub.service.friend.FriendService;
 import com.example.bugfixhub.session.Const;
 import lombok.RequiredArgsConstructor;
@@ -65,12 +64,12 @@ public class FriendController {
      */
     @GetMapping
     public ResponseEntity<List<FriendUserResDto>> getFriendRequests(
-            @RequestParam(name = "status") FriendStatus status,
+            @RequestParam(name = "status") String status,
             @SessionAttribute(name = Const.LOGIN_USER) UserResDto userResDto
     ) {
-        if (status.getValue().equals("accepted")) {
+        if (status.equals("accepted")) {
             return ResponseEntity.ok(friendService.findAllFriends(userResDto.getId()));
-        } else if (status.getValue().equals("unChecked")) {
+        } else if (status.equals("unChecked")) {
             return ResponseEntity.ok(friendService.findAllFriendReqs(userResDto.getId()));
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Status 를 확인해 주세요.");
