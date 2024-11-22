@@ -2,6 +2,40 @@
 
 ---
 
+## 팀원
+
+| 이름              | Github 프로필  | 블로그     | 역할 |
+| ----------------- | -------------- | ---------- | ---- |
+| 김민범 | [alsqja]      | [블로그](https://velog.io/@alsqja2626/posts)  | 팀장 |
+| 조현지 | [chohyuun]    | [블로그](https://something-do-it.tistory.com) | 팀원 |
+| 백은영 | [beunyeong]   | [블로그](https://beunyeong.tistory.com)       | 팀원 |
+| 김동건 | [gimdonggeon] | [블로그](https://codinggeony.tistory.com)     | 팀원 |
+
+[chohyuun]: https://github.com/chohyuun
+[alsqja]: https://github.com/alsqja
+[beunyeong]: https://github.com/beunyeong
+[gimdonggeon]: https://github.com/gimdonggeon
+
+## 수행한 일
+
+### 김민범
+
+- ㅁㅇㄴ
+
+### 조현지
+
+- ㅁㄴㅇ
+
+### 백은영
+
+- ㅁㄴㅇ
+
+### 김동건
+
+- ㅁㄴㅇ
+
+---
+
 ## 프로젝트 설계 시 목적 및 목표
 
 ---
