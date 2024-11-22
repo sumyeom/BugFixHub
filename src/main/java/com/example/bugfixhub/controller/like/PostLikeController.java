@@ -16,10 +16,16 @@ public class PostLikeController {
     private final PostLikeService postLikeService;
 
     @PostMapping("/{postId}/like")
-    public ResponseEntity<PostLikeResDto> postLike(@PathVariable Long postId,
+    public ResponseEntity<PostLikeResDto> addPostLike(@PathVariable Long postId,
                                                    @SessionAttribute UserResDto loginUser) {
-        PostLikeResDto postLikeResDto = postLikeService.addOrCancleLike(postId, loginUser.getId());
+        PostLikeResDto postLikeResDto = postLikeService.addPostLike(postId, loginUser.getId());
 
         return new ResponseEntity<>(postLikeResDto, HttpStatus.CREATED);
+    }
+    @DeleteMapping("{postId}/like")
+    public ResponseEntity<Void> cancleLike(@PathVariable Long postId,
+                                           @SessionAttribute UserResDto loginUser) {
+        postLikeService.canclePostLike(postId, loginUser.getId());
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
