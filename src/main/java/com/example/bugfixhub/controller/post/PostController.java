@@ -1,12 +1,25 @@
 package com.example.bugfixhub.controller.post;
 
-import com.example.bugfixhub.dto.post.*;
+import com.example.bugfixhub.dto.post.GetAllPostResDto;
+import com.example.bugfixhub.dto.post.GetIdPostResDto;
+import com.example.bugfixhub.dto.post.PostCommentsResDto;
+import com.example.bugfixhub.dto.post.PostReqDto;
+import com.example.bugfixhub.dto.post.PostResDto;
 import com.example.bugfixhub.dto.user.UserResDto;
 import com.example.bugfixhub.service.post.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;

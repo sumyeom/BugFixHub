@@ -3,7 +3,11 @@ package com.example.bugfixhub.service.user;
 import com.example.bugfixhub.config.PasswordEncoder;
 import com.example.bugfixhub.dto.post.GetAllUserPostResDataDto;
 import com.example.bugfixhub.dto.post.GetAllUserPostResDto;
-import com.example.bugfixhub.dto.user.*;
+import com.example.bugfixhub.dto.user.CreateUserReqDto;
+import com.example.bugfixhub.dto.user.LoginReqDto;
+import com.example.bugfixhub.dto.user.UpdateUserReqDto;
+import com.example.bugfixhub.dto.user.UserDetailResDto;
+import com.example.bugfixhub.dto.user.UserResDto;
 import com.example.bugfixhub.entity.post.Post;
 import com.example.bugfixhub.entity.user.User;
 import com.example.bugfixhub.repository.post.PostRepository;
@@ -118,7 +122,7 @@ public class UserServiceImpl implements UserService {
 
         isDeleted(findUser);
 
-        findUser.setDeleted(true);
+        userRepository.delete(findUser);
     }
 
     @Override
@@ -132,7 +136,7 @@ public class UserServiceImpl implements UserService {
                 post.getUser().getId(),
                 post.getUser().getName(),
                 post.getTitle(),
-                post.getType(),
+                post.getType().getValue(),
                 post.getComments().size(),
                 post.getCreatedAt(),
                 post.getUpdatedAt()

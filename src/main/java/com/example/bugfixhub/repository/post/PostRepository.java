@@ -1,6 +1,7 @@
 package com.example.bugfixhub.repository.post;
 
 import com.example.bugfixhub.entity.post.Post;
+import com.example.bugfixhub.enums.PostType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,7 +18,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findByUserIdAndDeletedFalse(Long userId, Pageable pageable);
 
-    Page<Post> findByTypeAndTitleLikeAndCreatedAtBetweenAndDeletedFalse(String type, String title, LocalDateTime start, LocalDateTime end, Pageable pageable);
+    Page<Post> findByTypeAndTitleLikeAndCreatedAtBetweenAndDeletedFalse(PostType type, String title, LocalDateTime start, LocalDateTime end, Pageable pageable);
 
     Page<Post> findByTitleLikeAndCreatedAtBetweenAndDeletedFalse(String title, LocalDateTime start, LocalDateTime end, Pageable pageable);
 
