@@ -60,7 +60,9 @@
 
 게시글 작성 시 요청 정보에 type요청을 추가하여,  정보글과 질문글로 카테고리를 구분하여 게시글을 볼 유저들의 편의성을 고려하였습니다.
 
+### ControllerAdvice 를 이용한 예외 처리
 
+GlobalExceptionHandler 를 구현하여 통일된 에러 Response 를 message, status 등을 활용하여 반환할 수 있도록 하였습니다.
 
 ### **API 명세서 URL :**
 
