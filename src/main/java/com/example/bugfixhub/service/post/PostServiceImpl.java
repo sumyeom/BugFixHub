@@ -199,7 +199,7 @@ public class PostServiceImpl implements PostService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "본인이 쓴 게시글만 삭제할 수 있습니다.");
         }
 
-        findPost.updateDelete(true);
+        postRepository.delete(findPost);
     }
 
     /**

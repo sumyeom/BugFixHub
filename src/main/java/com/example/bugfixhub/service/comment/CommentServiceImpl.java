@@ -79,6 +79,6 @@ public class CommentServiceImpl implements CommentService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "본인이 작성한 댓글 또는 해당 게시물의 작성자만 삭제할 수 있습니다.");
         }
 
-        comment.setDeleted(true);
+        commentRepository.delete(comment);
     }
 }

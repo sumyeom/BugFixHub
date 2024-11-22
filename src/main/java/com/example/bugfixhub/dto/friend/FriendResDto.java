@@ -22,6 +22,6 @@ public class FriendResDto {
         this.id = friend.getId();
         this.followId = friend.getFollower().getId();
         this.followingId = friend.getFollowing().getId();
-        this.status = friend.getStatus();
+        this.status = friend.getStatus().getValue();
     }
 }
