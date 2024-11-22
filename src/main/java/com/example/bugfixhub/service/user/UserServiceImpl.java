@@ -1,13 +1,9 @@
 package com.example.bugfixhub.service.user;
 
 import com.example.bugfixhub.config.PasswordEncoder;
-import com.example.bugfixhub.dto.post.GetAllPostResDataDto;
-import com.example.bugfixhub.dto.post.GetAllPostResDto;
-import com.example.bugfixhub.dto.user.CreateUserReqDto;
-import com.example.bugfixhub.dto.user.LoginReqDto;
-import com.example.bugfixhub.dto.user.UpdateUserReqDto;
-import com.example.bugfixhub.dto.user.UserDetailResDto;
-import com.example.bugfixhub.dto.user.UserResDto;
+import com.example.bugfixhub.dto.post.GetAllUserPostResDataDto;
+import com.example.bugfixhub.dto.post.GetAllUserPostResDto;
+import com.example.bugfixhub.dto.user.*;
 import com.example.bugfixhub.entity.post.Post;
 import com.example.bugfixhub.entity.user.User;
 import com.example.bugfixhub.repository.post.PostRepository;
@@ -126,12 +122,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public GetAllPostResDto findAllUserPost(Long id, int page, int limit) {
+    public GetAllUserPostResDto findAllUserPost(Long id, int page, int limit) {
         Pageable pageable = PageRequest.of(page, limit, Sort.by("createdAt").descending());
 
         Page<Post> postsPage = postRepository.findByUserIdAndDeletedFalse(id, pageable);
 
-        Page<GetAllPostResDataDto> posts = postsPage.map(post -> new GetAllPostResDataDto(
+        Page<GetAllUserPostResDataDto> posts = postsPage.map(post -> new GetAllUserPostResDataDto(
                 post.getId(),
                 post.getUser().getId(),
                 post.getUser().getName(),
@@ -142,7 +138,7 @@ public class UserServiceImpl implements UserService {
                 post.getUpdatedAt()
         ));
 
-        return new GetAllPostResDto((long) posts.getTotalPages(), posts.getTotalElements(), posts.getContent());
+        return new GetAllUserPostResDto((long) posts.getTotalPages(), posts.getTotalElements(), posts.getContent());
     }
 
     private void isDeleted(User user) {
