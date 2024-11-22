@@ -47,7 +47,7 @@ public class CommentLikeController {
 
         Long userId = loginUser.getId();
 
-        commentLikeService.deleteLike(postId,commentId);
+        commentLikeService.deleteLike(commentId,userId);
 
         return ResponseEntity.noContent().build();
     }
