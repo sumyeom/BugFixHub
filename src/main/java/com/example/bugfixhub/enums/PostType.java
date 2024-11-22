@@ -2,6 +2,8 @@ package com.example.bugfixhub.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 public enum PostType {
     INFO("info"),
@@ -25,6 +27,6 @@ public enum PostType {
                 return type;
             }
         }
-        throw new IllegalArgumentException("Invalid value for PostType: " + value);
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "잘못된 타입 입니다.");
     }
 }
