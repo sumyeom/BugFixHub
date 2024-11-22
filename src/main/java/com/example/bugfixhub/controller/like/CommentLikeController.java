@@ -25,9 +25,11 @@ public class CommentLikeController {
     public ResponseEntity<CommentLikeResDto> likeComment(
             @PathVariable Long postId,
             @PathVariable Long commentId,
-            @SessionAttribute UserResDto loginUser){
+            @SessionAttribute UserResDto loginUser) {
 
-        CommentLikeResDto commentLikeResDto = commentLikeService.likeComment(postId, commentId);
+        Long userId = loginUser.getId();
+
+        CommentLikeResDto commentLikeResDto = commentLikeService.likeComment(commentId, userId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(commentLikeResDto);
 
@@ -41,7 +43,9 @@ public class CommentLikeController {
     public ResponseEntity<Void> unlikeComment(
             @PathVariable Long postId,
             @PathVariable Long commentId,
-            @SessionAttribute UserResDto loginUser){
+            @SessionAttribute UserResDto loginUser) {
+
+        Long userId = loginUser.getId();
 
         commentLikeService.deleteLike(postId,commentId);
 
