@@ -1,6 +1,12 @@
 # **Newsfeed Project BY EightByte**
 
 ---
+## Tech Stack
+JAVA : JDK 17
+Spring Boot : 3.3.5
+IDE : IntelliJ
+MySQL : Ver 8+
+---
 
 ## 팀원
 
