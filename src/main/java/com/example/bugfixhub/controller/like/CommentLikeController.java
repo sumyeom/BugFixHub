@@ -23,12 +23,12 @@ public class CommentLikeController {
      */
     @PostMapping("/{commentId}/like")
     public ResponseEntity<CommentLikeResDto> likeComment(
+            @PathVariable Long postId,
             @PathVariable Long commentId,
             @SessionAttribute UserResDto loginUser) {
 
         Long userId = loginUser.getId();
-
-        CommentLikeResDto commentLikeResDto = commentLikeService.likeComment(commentId, userId);
+        CommentLikeResDto commentLikeResDto = commentLikeService.likeComment(commentId, postId, userId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(commentLikeResDto);
 
@@ -40,13 +40,12 @@ public class CommentLikeController {
      */
     @DeleteMapping("/{commentId}/like")
     public ResponseEntity<Void> deleteLike(
+            @PathVariable Long postId,
             @PathVariable Long commentId,
             @SessionAttribute UserResDto loginUser) {
 
         Long userId = loginUser.getId();
-
-
-        commentLikeService.deleteLike(commentId,userId);
+        commentLikeService.deleteLike(commentId, postId, userId);
 
         return ResponseEntity.noContent().build();
     }

@@ -29,18 +29,30 @@ public class CommentLikeServiceImpl implements CommentLikeService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * 0. 게시글과 댓글 관계 검증(추가)
+     */
+    private void validateCommentAndPostRelation(Long commentId, Long postId) {
+        if (!commentRepository.existsByIdAndPostId(commentId, postId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "게시글 ID와 댓글 ID의 관계가 유효하지 않습니다.");
+        }
+    }
+
 
     /**
      * 1. 댓글 좋아요:
      * 댓글 및 본인 여부 확인 -> 중복 확인 -> 좋아요
      */
+    @Override
     @Transactional
-    public CommentLikeResDto likeComment(Long commentId, Long userId) {
+    public CommentLikeResDto likeComment(Long commentId, Long postId, Long userId) {
 
 
-        Comment comment = commentRepository.findById(commentId)
+        Comment comment = commentRepository.findByIdAndDeletedFalse(commentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."));
 
+        // 게시글과 댓글 관계 검증
+        validateCommentAndPostRelation(commentId, postId);
 
         if (comment.getUser().getId().equals(userId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "본인 댓글에는 좋아요를 남길 수 없습니다");
@@ -64,12 +76,13 @@ public class CommentLikeServiceImpl implements CommentLikeService {
 
     }
 
+
     /**
      * 2. 댓글 좋아요 취소
      */
-    @Transactional
     @Override
-    public void deleteLike(Long commentId, Long userId) {
+    @Transactional
+    public void deleteLike(Long commentId, Long postId, Long userId) {
 
         if (!commentLikeRepository.existsByCommentIdAndUserId(commentId, userId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "좋아요를 남기지 않은 댓글입니다.");
