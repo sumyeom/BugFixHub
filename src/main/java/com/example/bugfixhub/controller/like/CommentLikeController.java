@@ -23,7 +23,6 @@ public class CommentLikeController {
      */
     @PostMapping("/{commentId}/like")
     public ResponseEntity<CommentLikeResDto> likeComment(
-            @PathVariable Long postId,
             @PathVariable Long commentId,
             @SessionAttribute UserResDto loginUser) {
 
@@ -40,12 +39,12 @@ public class CommentLikeController {
      * 2. 댓글 좋아요 취소
      */
     @DeleteMapping("/{commentId}/like")
-    public ResponseEntity<Void> unlikeComment(
-            @PathVariable Long postId,
+    public ResponseEntity<Void> deleteLike(
             @PathVariable Long commentId,
             @SessionAttribute UserResDto loginUser) {
 
         Long userId = loginUser.getId();
+
 
         commentLikeService.deleteLike(commentId,userId);
 

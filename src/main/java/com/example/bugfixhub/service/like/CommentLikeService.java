@@ -17,8 +17,8 @@ public interface CommentLikeService {
      *
      * @param commentId 댓글 ID
      * @param userId    사용자 ID
-     * @return
      */
+
     void deleteLike(Long commentId, Long userId);
 
 }
