@@ -1,5 +1,5 @@
 # **Newsfeed Project BY EightByte**
-###개발 관련 정보를 공유하고 질문, 답변을 할 수 있는 커뮤니티
+### 개발 관련 정보를 공유하고 질문, 답변을 할 수 있는 커뮤니티
 ![image](https://github.com/user-attachments/assets/4468113b-03a3-4c30-973f-ebed6c8250bd)
 
 
