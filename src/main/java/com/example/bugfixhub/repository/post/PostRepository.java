@@ -48,12 +48,17 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                 FROM post_like l
                 WHERE l.user_id = :userId
             ) user_like ON p.id = user_like.post_id
-            WHERE p.user_id IN (
+            WHERE (p.user_id IN (
                 SELECT f.follow_id
                 FROM friend f
                 WHERE f.following_id = :userId
                   AND f.status = 'accepted'
-            )
+            )OR p.user_id IN (
+                  SELECT f.following_id
+                  FROM friend f
+                  WHERE f.follow_id = :userId
+                  AND f.status = 'accepted'
+              ))
             AND p.deleted = false
             AND (:title IS NULL OR p.title LIKE CONCAT('%', :title, '%'))
             AND p.created_at BETWEEN :start AND :end
