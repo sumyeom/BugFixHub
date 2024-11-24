@@ -174,8 +174,8 @@ public class PostServiceImpl implements PostService {
 
             return new PostCommentsResDto(
                     comment.getId(),
-                    comment.getUser().getId(),
                     comment.getPost().getId(),
+                    comment.getUser().getId(),
                     comment.getContents(),
                     comment.getLikes().size(),
                     isLiked.get(),
