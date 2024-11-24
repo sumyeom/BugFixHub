@@ -9,16 +9,15 @@ public interface CommentLikeService {
      * @param commentId 댓글 ID
      * @param userId 사용자 ID
      */
-    CommentLikeResDto likeComment(Long commentId, Long userId);
+    CommentLikeResDto likeComment(Long commentId, Long postId, Long userId);
 
 
     /**
      * 2. 댓글 좋아요 취소
-     *
      * @param commentId 댓글 ID
      * @param userId    사용자 ID
-     * @return
      */
-    void deleteLike(Long commentId, Long userId);
+
+    void deleteLike(Long commentId, Long postId, Long userId);
 
 }
