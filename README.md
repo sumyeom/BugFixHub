@@ -152,7 +152,7 @@ MySQL : Ver 8+
 ## Trouble Shooting
 - [김민범 Trouble Shooting : JPA 삭제 구현 방법](https://velog.io/@alsqja2626/Trouble-Shooting-JPA-%EC%82%AD%EC%A0%9C-%EA%B5%AC%ED%98%84-%EB%B0%A9%EB%B2%95)
 - [조현지 Trouble Shooting : JPA를 활용한 join 구현과 Project Trouble Shooting](https://something-do-it.tistory.com/23)
-- [백은영 Trouble Shooting : ]()
+- [백은영 Trouble Shooting : 댓글, 게시글 관계 검증 문제 해결 ](https://beunyeong.tistory.com/106)
 - [김동건 Trouble Shooting : Bean Validation 적용 시 Trouble Shooting](https://codinggeony.tistory.com/14)
 
 ## 마치며
