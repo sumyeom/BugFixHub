@@ -69,6 +69,8 @@ MySQL : Ver 8+
 - API, ERD 기획 및 설계
 - Comment 관련 로직 구현
 - PostLike 관련 로직 구현
+- Comment 관련 요청 및 응답 예시 작성
+- Readme 작성 예시 틀 작성
 
 ---
 
