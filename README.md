@@ -23,6 +23,12 @@ MySQL : Ver 8+
 ![image](https://github.com/user-attachments/assets/a0cd3722-6cf4-4425-b269-6bcae2c39856)
 ---
 
+## Wire Frame :
+[프로토타입 URL](https://www.figma.com/proto/Ys4GRrolVShlxFbl0q5n6u/8%EC%A1%B0---%EB%89%B4%EC%8A%A4%ED%94%BC%EB%93%9C-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8?node-id=64-733&node-type=canvas&t=mi4F9kCPWVviIoUQ-1&scaling=min-zoom&content-scaling=fixed&page-id=0%3A1&starting-point-node-id=2%3A2)
+
+## 시연 영상
+[시연 영상 URL](https://www.youtube.com/watch?v=o0Cf7JTVnGU)
+
 ## 팀원
 
 | 이름              | Github 프로필  | 블로그     | 역할 |
